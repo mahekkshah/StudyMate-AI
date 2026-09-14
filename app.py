@@ -39,7 +39,6 @@ if uploaded_file:
         f"PDF uploaded successfully — {len(reader.pages)} pages"
     )
 
-
     # ---------------------------------------------------
     # EXTRACT TEXT
     # ---------------------------------------------------
@@ -50,14 +49,13 @@ if uploaded_file:
         page_text = page.extract_text() or ""
         pages.append(page_text)
 
-
     # ---------------------------------------------------
     # GENERATE NOTES
     # ---------------------------------------------------
 
     if st.button("📝 Generate Study Notes"):
 
-        chunk_size = 4
+        chunk_size = 2
         chunks = []
 
         for i in range(0, len(pages), chunk_size):
@@ -69,7 +67,6 @@ if uploaded_file:
             if chunk.strip():
                 chunks.append(chunk)
 
-
         st.write(
             f"Processing {len(chunks)} sections..."
         )
@@ -77,7 +74,6 @@ if uploaded_file:
         progress = st.progress(0)
 
         all_notes = []
-
 
         for i, chunk in enumerate(chunks):
 
@@ -92,7 +88,6 @@ if uploaded_file:
 
                 notes = generate_notes(chunk)
 
-
             all_notes.append(
                 f"## Section {i + 1}\n\n{notes}"
             )
@@ -101,11 +96,9 @@ if uploaded_file:
                 (i + 1) / len(chunks)
             )
 
-
         final_notes = "\n\n---\n\n".join(
             all_notes
         )
-
 
         # Save notes in session
         st.session_state["notes"] = final_notes
@@ -133,7 +126,6 @@ if "notes" in st.session_state:
     st.markdown(
         st.session_state["notes"]
     )
-
 
     # ---------------------------------------------------
     # QUIZ
@@ -170,7 +162,6 @@ if "quiz" in st.session_state:
         st.session_state["quiz"]
     )
 
-
     st.divider()
 
     st.header("✍️ Test Yourself")
@@ -182,7 +173,6 @@ if "quiz" in st.session_state:
     student_answer = st.text_input(
         "Your answer:"
     )
-
 
     if st.button("Check My Answer"):
 
@@ -201,7 +191,6 @@ if "quiz" in st.session_state:
                     ]
                 )
 
-
             st.subheader(
                 "🤖 Agent Feedback"
             )
@@ -209,6 +198,34 @@ if "quiz" in st.session_state:
             st.markdown(
                 feedback
             )
+
+            # ---------------------------------------------------
+            # SELF-CORRECTING LOOP
+            # If the agent's feedback indicates the answer was
+            # wrong, automatically regenerate a simpler explanation
+            # without the student having to ask.
+            # ---------------------------------------------------
+
+            if "incorrect" in feedback.lower() or "needs correction" in feedback.lower():
+
+                with st.spinner(
+                    "Agent noticed you're struggling — simplifying this topic..."
+                ):
+
+                    simpler_notes = generate_notes(
+                        f"The student struggled with this concept. Re-explain it in an "
+                        f"even simpler way, using short sentences and a concrete analogy.\n\n"
+                        f"ORIGINAL QUESTION:\n{question}\n\n"
+                        f"RELEVANT MATERIAL:\n{st.session_state['study_material'][:1500]}"
+                    )
+
+                st.info(
+                    "📘 Here's a simpler explanation, generated automatically:"
+                )
+
+                st.markdown(
+                    simpler_notes
+                )
 
         else:
 
