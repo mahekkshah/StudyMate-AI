@@ -55,7 +55,7 @@ if uploaded_file:
 
     if st.button("📝 Generate Study Notes"):
 
-        chunk_size = 2
+        chunk_size = 1
         chunks = []
 
         for i in range(0, len(pages), chunk_size):

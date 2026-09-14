@@ -3,7 +3,7 @@ from strands.models.ollama import OllamaModel
 
 model = OllamaModel(
     host="http://localhost:11434",
-    model_id="llama3.2"
+    model_id="llama3.2:1b"
 )
 
 quiz_agent = Agent(
