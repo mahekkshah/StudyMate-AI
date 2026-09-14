@@ -56,8 +56,8 @@ flowchart TD
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/mahekkshah/PDF-AGENT.git
-cd PDF-AGENT
+git clone https://github.com/mahekkshah/StudyMate-AI.git
+cd StudyMate-AI
 ```
 
 ### 2. Create a virtual environment and install dependencies
